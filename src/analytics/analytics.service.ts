@@ -28,7 +28,7 @@ export class AnalyticsService {
         return {
             short_code: url.short_code,
             long_url: url.long_url,
-            shortUrl: `${baseUrl}/${url.short_code}`,
+            short_url: `${baseUrl}/${url.short_code}`,
             clicks: url.clicks,
             created_at: url.created_at,
             expires_at: url.expires_at,

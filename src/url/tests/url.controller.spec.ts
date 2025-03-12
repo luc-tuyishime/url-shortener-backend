@@ -30,7 +30,7 @@ describe('UrlController', () => {
     const mockUrlResponse: UrlResponseDto = {
         short_code: 'abc123',
         long_url: 'https://example.com/test',
-        shortUrl: 'http://localhost:3001/abc123',
+        short_url: 'http://localhost:3001/abc123',
         created_at: new Date(),
         clicks: 0
     };

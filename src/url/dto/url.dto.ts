@@ -21,7 +21,7 @@ export class UrlResponseDto {
     long_url: string;
 
     @ApiProperty({ example: 'https://short.url/123abc' })
-    shortUrl: string;
+    short_url: string;
 
     @ApiProperty({ example: '2023-01-01T00:00:00.000Z' })
     created_at: Date;
@@ -41,7 +41,7 @@ export class UrlStatsDto {
     long_url: string;
 
     @ApiProperty({ example: 'https://short.url/123abc' })
-    shortUrl: string;
+    short_url: string;
 
     @ApiProperty({ example: 42 })
     clicks: number;

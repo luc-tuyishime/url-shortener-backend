@@ -22,19 +22,22 @@ export class UrlService {
     ): Promise<UrlResponseDto> {
         const { long_url, expires_at } = createUrlDto;
 
-        const short_codeLength = this.configService.get<number>('SHORT_URL_LENGTH', 6);
-        const short_code = nanoid(short_codeLength);
+        // Generate a unique short code
+        const shortCodeLength = this.configService.get<number>('SHORT_URL_LENGTH', 6);
+        const short_code = nanoid(shortCodeLength);
 
+        // Create and save the URL entity
         // @ts-ignore
         const urlEntity = this.urlRepository.create({
             short_code,
             long_url,
-            expires_at: expires_at ? new Date(expires_at) : null,
+            expiresAt: expires_at ? new Date(expires_at) : null,
             user_id: user.id,
         });
 
         const savedUrl: any = await this.urlRepository.save(urlEntity);
 
+        // Return the response with the customized short URL
         return this.mapEntityToResponseDto(savedUrl);
     }
 
@@ -45,6 +48,23 @@ export class UrlService {
         });
 
         return urls.map(url => this.mapEntityToResponseDto(url));
+    }
+
+    async findByShortCode(short_code: string): Promise<UrlEntity> {
+        const url = await this.urlRepository.findOne({
+            where: { short_code },
+        });
+
+        if (!url) {
+            throw new NotFoundException(`URL with short code ${short_code} not found`);
+        }
+
+        // Check if URL has expired
+        if (url.expires_at && new Date() > url.expires_at) {
+            throw new BadRequestException('URL has expired');
+        }
+
+        return url;
     }
 
     async incrementClicks(short_code: string): Promise<void> {
@@ -63,15 +83,34 @@ export class UrlService {
     }
 
     private mapEntityToResponseDto(urlEntity: UrlEntity): UrlResponseDto {
-        const baseUrl = this.configService.get<string>('BASE_URL');
+        try {
+            // Extract the domain from the original URL
+            const originalUrl = new URL(urlEntity.long_url);
+            const domain = `${originalUrl.protocol}//${originalUrl.hostname}`;
 
-        return {
-            short_code: urlEntity.short_code,
-            long_url: urlEntity.long_url,
-            shortUrl: `${baseUrl}/${urlEntity.short_code}`,
-            created_at: urlEntity.created_at,
-            expires_at: urlEntity.expires_at,
-            clicks: urlEntity.clicks,
-        };
+            // Create a shortened URL that maintains the original domain
+            const shortUrl = `${domain}/${urlEntity.short_code}`;
+
+            return {
+                short_code: urlEntity.short_code,
+                long_url: urlEntity.long_url,
+                short_url: shortUrl,
+                created_at: urlEntity.created_at,
+                expires_at: urlEntity.expires_at,
+                clicks: urlEntity.clicks,
+            };
+        } catch (error) {
+            // If URL parsing fails, fall back to the standard approach
+            const baseUrl = this.configService.get<string>('BASE_URL');
+
+            return {
+                short_code: urlEntity.short_code,
+                long_url: urlEntity.long_url,
+                short_url: `${baseUrl}/${urlEntity.short_code}`,
+                created_at: urlEntity.created_at,
+                expires_at: urlEntity.expires_at,
+                clicks: urlEntity.clicks,
+            };
+        }
     }
 }
