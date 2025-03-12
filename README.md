@@ -1,4 +1,4 @@
-# URL Shortener - Full Stack Application
+# URL Shortener
 
 A scalable URL shortener web application with a modern UI, secure authentication, and analytics.
 
