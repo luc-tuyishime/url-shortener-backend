@@ -20,7 +20,9 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "docker-compose-up": "docker compose up",
     "docker-compose-down": "docker compose down",
-    "docker-compose-build": "docker compose build"
+    "docker-compose-build": "docker compose build",
+    "migration:run": "typeorm migration:run",
+    "start:railway": "npm run migration:run && npm run start:prod"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

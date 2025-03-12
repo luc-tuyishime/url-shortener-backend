@@ -49,8 +49,8 @@ A scalable URL shortener web application with a modern UI, secure authentication
    ```
 
 4. The application should now be running at:
-    - Backend API: http://localhost:3001/api
-    - Swagger Documentation: http://localhost:3001/api
+    - Backend API: https://url-shortener-backend-production-bb28.up.railway.app/api
+    - Swagger Documentation: https://url-shortener-backend-production-bb28.up.railway.app/api/docs#/
 
 #### Option 2: Running Locally
 
