@@ -17,41 +17,41 @@ describe('UrlController', () => {
         username: 'lucas',
         email: 'test@example.com',
         password: 'Password123!',
-        firstName: null,
-        lastName: null,
-        profilePicture: null,
+        first_name: null,
+        last_name: null,
+        profile_picture: null,
         provider: null,
-        providerId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        provider_id: null,
+        created_at: new Date(),
+        updated_at: new Date(),
         urls: []
     };
 
     const mockUrlResponse: UrlResponseDto = {
-        shortCode: 'abc123',
-        longUrl: 'https://example.com/test',
+        short_code: 'abc123',
+        long_url: 'https://example.com/test',
         shortUrl: 'http://localhost:3001/abc123',
-        createdAt: new Date(),
+        created_at: new Date(),
         clicks: 0
     };
 
 
     const mockUrlEntity: UrlEntity = {
         id: '456',
-        shortCode: 'abc123',
-        longUrl: 'https://example.com/test',
+        short_code: 'abc123',
+        long_url: 'https://example.com/test',
         clicks: 0,
-        createdAt: new Date(),
-        expiresAt: null,
+        created_at: new Date(),
+        expires_at: null,
         user: mockUser,
-        userId: mockUser.id
+        user_id: mockUser.id
     };
 
     // Mock URL service
     const mockUrlService = {
         create: jest.fn().mockResolvedValue(mockUrlResponse),
         findAll: jest.fn().mockResolvedValue([mockUrlResponse]),
-        findByShortCode: jest.fn().mockResolvedValue(mockUrlEntity),
+        findByshort_code: jest.fn().mockResolvedValue(mockUrlEntity),
         incrementClicks: jest.fn().mockResolvedValue(undefined),
         delete: jest.fn().mockResolvedValue(undefined)
     };
@@ -83,7 +83,7 @@ describe('UrlController', () => {
     describe('create', () => {
         it('should create a shortened URL', async () => {
             const createUrlDto: CreateUrlDto = {
-                longUrl: 'https://example.com/test'
+                long_url: 'https://example.com/test'
             };
 
             const result = await controller.create(createUrlDto, mockUser);

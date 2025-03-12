@@ -14,16 +14,16 @@ import { UrlStatsDto } from '../url/dto/url.dto';
 export class AnalyticsController {
     constructor(private readonly analyticsService: AnalyticsService) {}
 
-    @Get(':shortCode')
+    @Get(':short_code')
     @ApiOperation({ summary: 'Get analytics for a specific shortened URL' })
     @ApiResponse({ status: 200, description: 'URL analytics retrieved successfully', type: UrlStatsDto })
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'URL not found' })
     async getUrlStats(
-        @Param('shortCode') shortCode: string,
+        @Param('short_code') short_code: string,
         @GetUser() user: UserEntity,
     ): Promise<UrlStatsDto> {
-        return this.analyticsService.getUrlStats(shortCode, user.id);
+        return this.analyticsService.getUrlStats(short_code, user.id);
     }
 
     @Get()

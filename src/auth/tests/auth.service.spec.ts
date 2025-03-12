@@ -20,13 +20,13 @@ describe('AuthService', () => {
         username: 'lucas',
         email: 'test@gmail.com',
         password: 'Test@123!',
-        firstName: null,
-        lastName: null,
-        profilePicture: null,
+        first_name: null,
+        last_name: null,
+        profile_picture: null,
         provider: null,
-        providerId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        provider_id: null,
+        created_at: new Date(),
+        updated_at: new Date(),
         urls: []
     };
 

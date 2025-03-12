@@ -15,13 +15,13 @@ describe('AuthController', () => {
         username: 'kigali',
         email: 'lucas@gmail.com',
         password: 'Voila123!!',
-        firstName: null,
-        lastName: null,
-        profilePicture: null,
+        first_name: null,
+        last_name: null,
+        profile_picture: null,
         provider: null,
-        providerId: null,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        provider_id: null,
+        created_at: new Date(),
+        updated_at: new Date(),
         urls: []
     };
 
@@ -33,7 +33,7 @@ describe('AuthController', () => {
 
     const mockAuthService = {
         register: jest.fn().mockImplementation((dto) => {
-            return Promise.resolve({ userId: '123', message: 'User registered successfully' });
+            return Promise.resolve({ user_id: '123', message: 'User registered successfully' });
         }),
         login: jest.fn().mockResolvedValue(mockTokens),
         refreshTokens: jest.fn().mockResolvedValue(mockTokens),
@@ -80,7 +80,7 @@ describe('AuthController', () => {
             const result = await controller.register(registerDto);
 
             expect(authService.register).toHaveBeenCalledWith(registerDto);
-            expect(result).toEqual({ userId: undefined, message: 'User registered successfully' });
+            expect(result).toEqual({ user_id: undefined, message: 'User registered successfully' });
         });
     });
 

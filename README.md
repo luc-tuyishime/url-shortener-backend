@@ -94,8 +94,8 @@ The API documentation is available via Swagger UI at:
 | GET    | /api/auth/google          | Initial google OAuth         | JWT            |
 | GET    | /api/auth/google/callback | Google OAuth callback        | JWT            |
 | GET    | /api/urls                 | List all user's URLs         | JWT            |
-| DELETE | /api/urls/:shortCode      | Delete a shortened URL       | JWT            |
-| GET    | /api/analytics/:shortCode | Get URL analytics            | JWT            |
+| DELETE | /api/urls/:short_code      | Delete a shortened URL       | JWT            |
+| GET    | /api/analytics/:short_code | Get URL analytics            | JWT            |
 | GET    | /api/analytics            | Get user's overall analytics | JWT            |
 
 ## Testing with Postman

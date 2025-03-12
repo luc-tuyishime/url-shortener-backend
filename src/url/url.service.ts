@@ -20,47 +20,45 @@ export class UrlService {
         createUrlDto: CreateUrlDto,
         user: UserEntity,
     ): Promise<UrlResponseDto> {
-        const { longUrl, expiresAt } = createUrlDto;
+        const { long_url, expires_at } = createUrlDto;
 
-        // Generate a unique short code
-        const shortCodeLength = this.configService.get<number>('SHORT_URL_LENGTH', 6);
-        const shortCode = nanoid(shortCodeLength);
+        const short_codeLength = this.configService.get<number>('SHORT_URL_LENGTH', 6);
+        const short_code = nanoid(short_codeLength);
 
-        // Create and save the URL entity
+        // @ts-ignore
         const urlEntity = this.urlRepository.create({
-            shortCode,
-            longUrl,
-            expiresAt: expiresAt ? new Date(expiresAt) : null,
-            userId: user.id,
+            short_code,
+            long_url,
+            expires_at: expires_at ? new Date(expires_at) : null,
+            user_id: user.id,
         });
 
-        const savedUrl = await this.urlRepository.save(urlEntity);
+        const savedUrl: any = await this.urlRepository.save(urlEntity);
 
-        // Return the response with the full short URL
         return this.mapEntityToResponseDto(savedUrl);
     }
 
-    async findAll(userId: string): Promise<UrlResponseDto[]> {
+    async findAll(user_id: string): Promise<UrlResponseDto[]> {
         const urls = await this.urlRepository.find({
-            where: { userId },
-            order: { createdAt: 'DESC' },
+            where: { user_id },
+            order: { created_at: 'DESC' },
         });
 
         return urls.map(url => this.mapEntityToResponseDto(url));
     }
 
-    async incrementClicks(shortCode: string): Promise<void> {
-        await this.urlRepository.increment({ shortCode }, 'clicks', 1);
+    async incrementClicks(short_code: string): Promise<void> {
+        await this.urlRepository.increment({ short_code }, 'clicks', 1);
     }
 
-    async delete(shortCode: string, userId: string): Promise<void> {
+    async delete(short_code: string, user_id: string): Promise<void> {
         const result = await this.urlRepository.delete({
-            shortCode,
-            userId,
+            short_code,
+            user_id,
         });
 
         if (result.affected === 0) {
-            throw new NotFoundException(`URL with short code ${shortCode} not found or you don't have permission to delete it`);
+            throw new NotFoundException(`URL with short code ${short_code} not found or you don't have permission to delete it`);
         }
     }
 
@@ -68,11 +66,11 @@ export class UrlService {
         const baseUrl = this.configService.get<string>('BASE_URL');
 
         return {
-            shortCode: urlEntity.shortCode,
-            longUrl: urlEntity.longUrl,
-            shortUrl: `${baseUrl}/${urlEntity.shortCode}`,
-            createdAt: urlEntity.createdAt,
-            expiresAt: urlEntity.expiresAt,
+            short_code: urlEntity.short_code,
+            long_url: urlEntity.long_url,
+            shortUrl: `${baseUrl}/${urlEntity.short_code}`,
+            created_at: urlEntity.created_at,
+            expires_at: urlEntity.expires_at,
             clicks: urlEntity.clicks,
         };
     }

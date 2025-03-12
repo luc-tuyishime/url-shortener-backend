@@ -14,46 +14,46 @@ export class AnalyticsService {
         private readonly configService: ConfigService,
     ) {}
 
-    async getUrlStats(shortCode: string, userId: string): Promise<UrlStatsDto> {
+    async getUrlStats(short_code: string, user_id: string): Promise<UrlStatsDto> {
         const url = await this.urlRepository.findOne({
-            where: { shortCode, userId },
+            where: { short_code, user_id },
         });
 
         if (!url) {
-            throw new NotFoundException(`URL with short code ${shortCode} not found or you don't have permission to view it`);
+            throw new NotFoundException(`URL with short code ${short_code} not found or you don't have permission to view it`);
         }
 
         const baseUrl = this.configService.get<string>('BASE_URL');
 
         return {
-            shortCode: url.shortCode,
-            longUrl: url.longUrl,
-            shortUrl: `${baseUrl}/${url.shortCode}`,
+            short_code: url.short_code,
+            long_url: url.long_url,
+            shortUrl: `${baseUrl}/${url.short_code}`,
             clicks: url.clicks,
-            createdAt: url.createdAt,
-            expiresAt: url.expiresAt,
+            created_at: url.created_at,
+            expires_at: url.expires_at,
         };
     }
 
-    async getUserStats(userId: string): Promise<any> {
-        const totalUrls = await this.urlRepository.count({ where: { userId } });
+    async getUserStats(user_id: string): Promise<any> {
+        const totalUrls = await this.urlRepository.count({ where: { user_id } });
 
         const clicksResult = await this.urlRepository
             .createQueryBuilder('url')
             .select('SUM(url.clicks)', 'totalClicks')
-            .where('url.userId = :userId', { userId })
+            .where('url.user_id = :user_id', { user_id })
             .getRawOne();
 
         const totalClicks = parseInt(clicksResult.totalClicks) || 0;
 
         const mostClickedUrl = await this.urlRepository.findOne({
-            where: { userId },
+            where: { user_id },
             order: { clicks: 'DESC' },
         });
 
         const mostRecentUrl = await this.urlRepository.findOne({
-            where: { userId },
-            order: { createdAt: 'DESC' },
+            where: { user_id },
+            order: { created_at: 'DESC' },
         });
 
         const avgClicks = totalUrls > 0 ? totalClicks / totalUrls : 0;
@@ -63,14 +63,14 @@ export class AnalyticsService {
             totalClicks,
             avgClicksPerUrl: avgClicks.toFixed(2),
             mostClickedUrl: mostClickedUrl ? {
-                shortCode: mostClickedUrl.shortCode,
+                short_code: mostClickedUrl.short_code,
                 clicks: mostClickedUrl.clicks,
-                longUrl: mostClickedUrl.longUrl,
+                long_url: mostClickedUrl.long_url,
             } : null,
             mostRecentUrl: mostRecentUrl ? {
-                shortCode: mostRecentUrl.shortCode,
-                createdAt: mostRecentUrl.createdAt,
-                longUrl: mostRecentUrl.longUrl,
+                short_code: mostRecentUrl.short_code,
+                created_at: mostRecentUrl.created_at,
+                long_url: mostRecentUrl.long_url,
             } : null,
         };
     }

@@ -21,7 +21,7 @@ export class AuthController {
     @ApiResponse({ status: 409, description: 'User already exists' })
     async register(@Body() registerDto: RegisterDto) {
         const user = await this.authService.register(registerDto);
-        return { message: 'User registered successfully', userId: user.id };
+        return { message: 'User registered successfully', user_id: user.id };
     }
 
     @Post('login')
@@ -71,7 +71,6 @@ export class AuthController {
     @ApiOperation({ summary: 'Initiate Google OAuth login flow' })
     @ApiResponse({ status: 302, description: 'Redirect to Google login' })
     googleAuth() {
-        // This route initiates the Google OAuth flow - handler logic is in the guard
     }
 
     @Get('google/callback')

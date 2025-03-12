@@ -17,7 +17,6 @@ export class AuthService {
     ) {}
 
     async register(registerDto: RegisterDto): Promise<UserEntity> {
-        // Check if user exists
         const userExists = await this.userService.findByEmail(registerDto.email);
         if (userExists) {
             throw new ConflictException('User with this email already exists');
@@ -28,10 +27,8 @@ export class AuthService {
             throw new ConflictException('User with this username already exists');
         }
 
-        // Hash password
         const hashedPassword = await this.hashPassword(registerDto.password);
 
-        // Create user
         return this.userService.create({
             ...registerDto,
             password: hashedPassword,
@@ -39,28 +36,25 @@ export class AuthService {
     }
 
     async login(loginDto: LoginDto): Promise<TokensDto> {
-        // Find user by email or username
         const user = await this.userService.findByUsernameOrEmail(loginDto.username);
 
         if (!user) {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        // Verify password
         const passwordMatches = await this.verifyPassword(user.password, loginDto.password);
 
         if (!passwordMatches) {
             throw new UnauthorizedException('Invalid credentials');
         }
 
-        // Generate tokens
         const tokens = await this.generateTokens(user);
 
         return tokens;
     }
 
-    async refreshTokens(userId: string): Promise<TokensDto> {
-        const user = await this.userService.findOne(userId);
+    async refreshTokens(user_id: string): Promise<TokensDto> {
+        const user = await this.userService.findOne(user_id);
 
         if (!user) {
             throw new UnauthorizedException('User no longer exists');
@@ -70,41 +64,36 @@ export class AuthService {
     }
 
     async validateOAuthUser(oauthUser: OAuthUser): Promise<UserEntity> {
-        // Check if user exists by OAuth provider and ID
-        let user = await this.userService.findByProviderAndProviderId(
+        let user = await this.userService.findByProviderAndprovider_id(
             oauthUser.provider,
-            oauthUser.providerId,
+            oauthUser.provider_id,
         );
 
-        // If user doesn't exist, check by email
         if (!user) {
             user = await this.userService.findByEmail(oauthUser.email);
 
-            // If user exists by email, update with OAuth info
             if (user) {
                 user.provider = oauthUser.provider;
-                user.providerId = oauthUser.providerId;
+                user.provider_id = oauthUser.provider_id;
 
-                // Update other profile info if provided
-                if (oauthUser.firstName) user.firstName = oauthUser.firstName;
-                if (oauthUser.lastName) user.lastName = oauthUser.lastName;
-                if (oauthUser.picture) user.profilePicture = oauthUser.picture;
+                if (oauthUser.first_name) user.first_name = oauthUser.first_name;
+                if (oauthUser.last_name) user.last_name = oauthUser.last_name;
+                if (oauthUser.picture) user.profile_picture = oauthUser.picture;
 
                 return this.userService.save(user);
             }
 
-            // If user doesn't exist at all, create a new one
             const username = await this.generateUniqueUsername(oauthUser.email);
 
             return this.userService.create({
                 username,
                 email: oauthUser.email,
-                password: null, // No password for OAuth users
+                password: null,
                 provider: oauthUser.provider,
-                providerId: oauthUser.providerId,
-                firstName: oauthUser.firstName,
-                lastName: oauthUser.lastName,
-                profilePicture: oauthUser.picture,
+                provider_id: oauthUser.provider_id,
+                first_name: oauthUser.first_name,
+                last_name: oauthUser.last_name,
+                profile_picture: oauthUser.picture,
             });
         }
 
@@ -112,13 +101,10 @@ export class AuthService {
     }
 
     private async generateUniqueUsername(email: string): Promise<string> {
-        // Generate username from email (e.g., johndoe@example.com -> johndoe)
         let username = email.split('@')[0].toLowerCase();
 
-        // Check if username exists
         const userExists = await this.userService.findByUsername(username);
 
-        // If username exists, append random numbers
         if (userExists) {
             const randomSuffix = Math.floor(1000 + Math.random() * 9000); // 4-digit number
             username = `${username}${randomSuffix}`;

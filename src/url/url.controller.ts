@@ -49,7 +49,7 @@ export class UrlController {
     }
 
 
-    @Delete('urls/:shortCode')
+    @Delete('urls/:short_code')
     @UseGuards(JwtAuthGuard)
     @HttpCode(HttpStatus.NO_CONTENT)
     @ApiBearerAuth()
@@ -58,9 +58,9 @@ export class UrlController {
     @ApiResponse({ status: 401, description: 'Unauthorized' })
     @ApiResponse({ status: 404, description: 'URL not found' })
     async delete(
-        @Param('shortCode') shortCode: string,
+        @Param('short_code') short_code: string,
         @GetUser() user: UserEntity,
     ): Promise<void> {
-        await this.urlService.delete(shortCode, user.id);
+        await this.urlService.delete(short_code, user.id);
     }
 }

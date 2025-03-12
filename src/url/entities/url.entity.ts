@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Index, JoinColumn } from 'typeorm';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    ManyToOne,
+    Index,
+    JoinColumn,
+} from 'typeorm';
 import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('urls')
@@ -8,24 +16,24 @@ export class UrlEntity {
 
     @Column()
     @Index({ unique: true })
-    shortCode: string;
+    short_code: string;
 
     @Column()
-    longUrl: string;
+    long_url: string;
 
     @Column({ default: 0 })
     clicks: number;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @Column({ nullable: true })
-    expiresAt: Date;
+    expires_at: Date;
 
     @ManyToOne(() => UserEntity, user => user.urls)
-    @JoinColumn({ name: 'userId' })
+    @JoinColumn({ name: 'user_id' })
     user: UserEntity;
 
     @Column()
-    userId: string;
+    user_id: string;
 }

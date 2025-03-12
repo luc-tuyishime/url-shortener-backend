@@ -42,11 +42,11 @@ export class UserService {
         });
     }
 
-    async findByProviderAndProviderId(provider: string, providerId: string): Promise<UserEntity> {
+    async findByProviderAndprovider_id(provider: string, provider_id: string): Promise<UserEntity> {
         return this.userRepository.findOne({
             where: {
                 provider,
-                providerId,
+                provider_id,
             },
         });
     }

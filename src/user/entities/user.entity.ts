@@ -18,25 +18,25 @@ export class UserEntity {
     password: string;
 
     @Column({ nullable: true })
-    firstName: string;
+    first_name: string;
 
     @Column({ nullable: true })
-    lastName: string;
+    last_name: string;
 
     @Column({ nullable: true })
-    profilePicture: string;
+    profile_picture: string;
 
     @Column({ nullable: true })
     provider: string;
 
     @Column({ nullable: true })
-    providerId: string;
+    provider_id: string;
 
     @CreateDateColumn()
-    createdAt: Date;
+    created_at: Date;
 
     @UpdateDateColumn()
-    updatedAt: Date;
+    updated_at: Date;
 
     @OneToMany(() => UrlEntity, url => url.user)
     urls: UrlEntity[];
