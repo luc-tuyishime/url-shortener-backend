@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - BASE_URL=http://localhost:3001
+      - FRONTEND_URL=http://localhost:3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=url_shortener
+      - DB_SSL=false
+      - JWT_ACCESS_SECRET=dev_access_secret
+      - JWT_ACCESS_EXPIRATION=15m
+      - JWT_REFRESH_SECRET=dev_refresh_secret
+      - JWT_REFRESH_EXPIRATION=7d
+      - SHORT_URL_LENGTH=6
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: npm run start:dev
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=url_shortener
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  # Frontend service will be added later
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     - REACT_APP_API_URL=http://localhost:3001/api
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+
+volumes:
+  postgres_data:
