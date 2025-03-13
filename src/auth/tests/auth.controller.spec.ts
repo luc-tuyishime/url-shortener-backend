@@ -42,7 +42,7 @@ describe('AuthController', () => {
 
     const mockConfigService = {
         get: jest.fn().mockImplementation((key) => {
-            if (key === 'FRONTEND_URL') return 'http://localhost:3000';
+            if (key === 'FRONTEND_URL') return 'https://url-shortener-frontend-wine.vercel.app';
             return 'mock_value';
         }),
     };

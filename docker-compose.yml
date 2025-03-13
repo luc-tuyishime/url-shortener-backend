@@ -13,7 +13,7 @@ services:
       - NODE_ENV=development
       - PORT=3001
       - BASE_URL=http://localhost:3001
-      - FRONTEND_URL=http://localhost:3000
+      - FRONTEND_URL=https://url-shortener-frontend-wine.vercel.app
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_USERNAME=postgres

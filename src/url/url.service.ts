@@ -22,11 +22,9 @@ export class UrlService {
     ): Promise<UrlResponseDto> {
         const { long_url, expires_at } = createUrlDto;
 
-        // Generate a unique short code
         const shortCodeLength = this.configService.get<number>('SHORT_URL_LENGTH', 6);
         const short_code = nanoid(shortCodeLength);
 
-        // Create and save the URL entity
         // @ts-ignore
         const urlEntity = this.urlRepository.create({
             short_code,
@@ -37,7 +35,6 @@ export class UrlService {
 
         const savedUrl: any = await this.urlRepository.save(urlEntity);
 
-        // Return the response with the customized short URL
         return this.mapEntityToResponseDto(savedUrl);
     }
 
@@ -59,7 +56,6 @@ export class UrlService {
             throw new NotFoundException(`URL with short code ${short_code} not found`);
         }
 
-        // Check if URL has expired
         if (url.expires_at && new Date() > url.expires_at) {
             throw new BadRequestException('URL has expired');
         }
@@ -84,11 +80,9 @@ export class UrlService {
 
     private mapEntityToResponseDto(urlEntity: UrlEntity): UrlResponseDto {
         try {
-            // Extract the domain from the original URL
             const originalUrl = new URL(urlEntity.long_url);
             const domain = `${originalUrl.protocol}//${originalUrl.hostname}`;
 
-            // Create a shortened URL that maintains the original domain
             const shortUrl = `${domain}/${urlEntity.short_code}`;
 
             return {
@@ -100,7 +94,6 @@ export class UrlService {
                 clicks: urlEntity.clicks,
             };
         } catch (error) {
-            // If URL parsing fails, fall back to the standard approach
             const baseUrl = this.configService.get<string>('BASE_URL');
 
             return {
