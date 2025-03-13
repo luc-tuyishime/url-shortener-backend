@@ -19,7 +19,7 @@ async function bootstrap() {
     );
 
     app.enableCors({
-        origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+        origin: process.env.FRONTEND_URL || 'https://url-shortener-frontend-wine.vercel.app',
         credentials: true,
     });
 
@@ -43,7 +43,7 @@ async function bootstrap() {
     });
 
 
-    await app.listen(process.env.PORT || 3001);
+    await app.listen(process.env.PORT || 3001, '0.0.0.0');
     console.log(`Application is running on: ${await app.getUrl()}`);
 }
 
