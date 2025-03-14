@@ -1,166 +1,215 @@
 # URL Shortener
 
-A scalable URL shortener web application with a modern UI, secure authentication, and analytics.
+A modern URL shortening service built with React, Vite, and NestJS.
 
-## Tech Stack
+## Live Demo
 
-### Backend
-- NestJS (Node.js framework)
-- TypeORM for database interactions
-- PostgreSQL for data storage
-- JWT for authentication
-- Swagger for API documentation
-- Docker for containerization
+Frontend: [https://url-shortener-frontend-wine.vercel.app](https://url-shortener-frontend-wine.vercel.app)
+
+Backend API: [https://url-shortener-backend-production-bb28.up.railway.app](https://url-shortener-backend-production-bb28.up.railway.app)
 
 ## Features
 
-- User registration and authentication with JWT
-- Create, manage, and delete shortened URLs
-- Track URL usage with analytics
-- RESTful API with Swagger documentation
-- Rate limiting to prevent abuse
-- Containerized with Docker
+- Create shortened URLs
+- Track URL click analytics
+- User authentication
+- Custom short URL slugs
+- QR code generation
 
-## Getting Started
+## Technology Stack
+
+### Frontend
+- React
+- TypeScript
+- Vite
+- Tailwind CSS
+- Deployed on Vercel
+
+### Backend
+- NestJS
+- TypeScript
+- PostgreSQL
+- Deployed on Railway
+
+## Local Development
 
 ### Prerequisites
-- Docker and Docker Compose
-- Node.js 16+ and npm (for local development without Docker)
+- Docker and Docker Compose (for containerized setup)
+- Node.js (v16+)
+- npm or yarn
 - PostgreSQL (for local development without Docker)
 
-### Installation & Setup
+### Option 1: Using Docker Compose (Recommended)
 
-#### Option 1: Using Docker (Recommended)
+This approach runs both the backend and database in containers, simplifying setup.
 
-1. Clone the repository:
+1. Ensure Docker and Docker Compose are installed and running on your system.
+
+2. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/url-shortener.git
-   cd url-shortener
+   git clone https://github.com/luc-tuyishime/url-shortener-backend.git
+   cd url-shortener-backend
    ```
 
-2. Create a `.env` file in the backend directory from the example:
+3. Create a `.env` file in the backend directory from the example:
    ```bash
    cp backend/.env.example backend/.env
    ```
 
-3. Build and start the containers:
+4. Start the Docker containers:
    ```bash
    docker compose up
    ```
 
-4. The application should now be running at:
-    - Backend API: https://url-shortener-backend-production-bb28.up.railway.app/api
-    - Swagger Documentation: https://url-shortener-backend-production-bb28.up.railway.app/api/docs#/
-
-#### Option 2: Running Locally
-
-1. Clone the repository:
+   For detached mode (running in background):
    ```bash
-   git clone https://github.com/yourusername/url-shortener.git
-   cd url-shortener
+   docker compose up -d
    ```
 
-2. Set up the backend:
+5. To rebuild containers after making changes:
    ```bash
-   cd backend
-   npm install
-   cp .env.example .env
+   docker compose up --build
    ```
 
-3. Configure your PostgreSQL connection in the `.env` file
-
-4. Start the backend server:
+6. To stop all containers:
    ```bash
-   npm run start:dev
+   docker compose down
    ```
 
-5. The backend should now be running at http://localhost:3001/api
+7. The application will be available at:
+   - Backend API: http://localhost:3001/api
+   - Swagger Documentation: http://localhost:3001/api/docs
 
-## API Documentation
-
-The API documentation is available via Swagger UI at:
-- http://localhost:3001/api
-
-## Backend API Endpoints
-
-| Method | Endpoint                  | Description                  | Authentication |
-|--------|---------------------------|------------------------------|----------------|
-| POST   | /api/auth/register        | Register a new user          | Public         |
-| POST   | /api/auth/login           | Login and get JWT tokens     | Public         |
-| POST   | /api/auth/refresh         | Refresh access token         | JWT Refresh    |
-| POST   | /api/auth/logout          | Logout                       | JWT            |
-| GET    | /api/auth/me              | Get current user info        | JWT            |
-| POST   | /api/shorten              | Create a shortened URL       | JWT            |
-| GET    | /api/auth/google          | Initial google OAuth         | JWT            |
-| GET    | /api/auth/google/callback | Google OAuth callback        | JWT            |
-| GET    | /api/urls                 | List all user's URLs         | JWT            |
-| DELETE | /api/urls/:short_code      | Delete a shortened URL       | JWT            |
-| GET    | /api/analytics/:short_code | Get URL analytics            | JWT            |
-| GET    | /api/analytics            | Get user's overall analytics | JWT            |
-
-## Testing with Postman
-
-1. Register a new user
-2. Login to get your JWT tokens
-3. Set the Authorization header for authenticated requests
-4. Create and manage your shortened URLs
-
-## Running Tests
-
-Make sure you have the test scripts in your package.json:
-
-```
-"scripts": {
-  "test": "jest",
-  "test:watch": "jest --watch",
-  "test:cov": "jest --coverage",
-  "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-  "test:e2e": "jest --config ./test/jest-e2e.json"
-}
-```
-
-```bash
-# Run unit tests
-npm run test
-
-```
+### Option 2: Local Development Setup
 
 ## Docker Environment
 
 The Docker setup includes:
 - NestJS backend service
 - PostgreSQL database
-- (Frontend service to be added)
 
-To customize ports or environment variables, edit the `docker-compose.yml` and `.env` files.
+Docker Compose configuration (`docker-compose.yml`):
+```yaml
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3001:3001'
+    depends_on:
+      - postgres
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - BASE_URL=http://localhost:3001
+      - FRONTEND_URL=http://localhost:5173
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=postgres
+      - DB_DATABASE=url_shortener
+      - JWT_ACCESS_SECRET=dev_access_secret
+      - JWT_REFRESH_SECRET=dev_refresh_secret
+    volumes:
+      - .:/app
+      - /app/node_modules
+
+  postgres:
+    image: postgres:15-alpine
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=url_shortener
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+```
+
+## Environment Variables
+
+### Frontend
+Create a `.env` file in the frontend directory with:
+```
+VITE_API_URL=http://localhost:3001
+```
+
+### Backend
+Create a `.env` file in the backend directory with:
+```
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_DATABASE=url_shortener
+DB_SSL=false
+
+# Authentication
+JWT_ACCESS_SECRET=your_access_secret
+JWT_ACCESS_EXPIRATION=15m
+JWT_REFRESH_SECRET=your_refresh_secret
+JWT_REFRESH_EXPIRATION=7d
+
+# Application
+PORT=3001
+BASE_URL=http://localhost:3001
+FRONTEND_URL=http://localhost:5173
+SHORT_URL_LENGTH=6
+
+# OAuth (if using)
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+```
+
+## Deployment
+
+- Frontend is deployed on Vercel
+- Backend is deployed on Railway
+
+### Railway Deployment (Backend)
+1. Connect your GitHub repository to Railway
+2. Configure all required environment variables
+3. Deploy the application
+
+## CORS Configuration
+
+The backend is configured to accept requests from the following origins:
+- http://localhost:5173 (development)
+- https://url-shortener-frontend-wine.vercel.app (production)
 
 ## Troubleshooting
 
 ### Common Issues
 
 1. **Database Connection Error**:
-    - Check PostgreSQL credentials in `.env`
-    - If using Docker, ensure the PostgreSQL container is running
+   - Check PostgreSQL credentials in `.env`
+   - If using Docker, ensure the PostgreSQL container is running
 
 2. **JWT Token Issues**:
-    - Set strong, unique secrets for JWT_ACCESS_SECRET and JWT_REFRESH_SECRET
-    - Ensure proper token inclusion in Authorization header
+   - Set strong, unique secrets for JWT_ACCESS_SECRET and JWT_REFRESH_SECRET
+   - Ensure proper token inclusion in Authorization header
 
 3. **CORS Issues**:
-    - Add your frontend URL to FRONTEND_URL in `.env`
+   - Verify your frontend URL is correctly added to the allowed origins list
 
 4. **Docker Architecture Issues**:
-    - If experiencing `Exec format error` with native modules like argon2, try rebuilding with:
-      ```bash
-      docker compose build --no-cache
-      ```
+   - If experiencing `Exec format error` with native modules like argon2, try rebuilding with:
+     ```bash
+     docker compose build --no-cache
+     ```
 
-## Deployment
+5. **Missing Dependencies in Docker**:
+   - If you see errors about missing modules, ensure your Dockerfile properly installs all dependencies:
+     ```bash
+     docker compose exec backend npm install <package-name>
+     ```
+   - Or update your Dockerfile to explicitly install the missing package
 
-The application can be deployed to various cloud platforms:
+## License
 
-### Railway (Recommended for Backend)
-1. Connect your GitHub repository to Railway
-2. Configure environment variables
-3. Deploy the application
-
+[MIT](LICENSE)

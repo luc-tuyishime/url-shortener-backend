@@ -7,6 +7,10 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
+RUN npm install
+RUN npm install passport-google-oauth20 --save
+RUN npm install -D @types/passport-google-oauth20
+
 # Install build essentials for argon2
 RUN apk add --no-cache make gcc g++ python3
 
